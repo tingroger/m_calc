@@ -32,7 +32,7 @@ double mod_d(double a, double b)
 
 void help_info(void)
 {
-	printf("默认进入普通计算模式，-p 进入程序员模式\n");
+	printf("默认进入标准模式，-p 进入程序员模式\n");
 	printf("[标准模式]\n");
 	printf("\t+: 加法\n");
 	printf("\t-: 减法\n");
@@ -230,7 +230,7 @@ int main()
 	char op;
 	double num1, num2;
 	int ret;
-	printf("[CALCULATOR v1.0]\nType \"--help\" or \"-h\" for more infomation\n");
+	printf("[M-CALCULATOR v1.0]\nType \"--help\" or \"-h\" for more infomation\n");
 
 	bool flag = true;
 	char mode_flag = 0; 
@@ -251,37 +251,54 @@ int main()
 			printf("[Debug][%d] 字符串解析返回值: %d\n", __LINE__, ret);
 			printf("[Debug][%d] 计算表达式: %lf %c %lf\n", __LINE__, num1, op, num2);
 			#endif
-		if(ret == 1) //进入程序员模式
+
+		if (ret == 0)
 		{
-			printf("进入[程序员模式]\n");
+			;
+		}
+		else if(ret == 1) //进入程序员模式
+		{
+			printf("进入[程序员模式],\"q\"退出\n");
 			mode_flag=1;
 			continue;
 		}
-		else if(ret == -2)    //退出
-			break;
+		else if(ret == -2)			//退出
+		{
+			if(mode_flag == 0)		//退出程序
+			{
+				break;			
+			}
+			else					//退到标准模式
+			{
+				mode_flag=0;
+				continue;
+			}
+		}
 		else if(ret == -1)
+		{
 			continue;
-		else if(ret != 0)
+		}
+		else 
 		{
 			error_msg(6); //字符串解析返回值错误
 			continue;
 		}
+		
 
 		//检查数据是否超过范围
 		//check_operand();
 
 		//运算
-		if(mode_flag == 0)
+		switch (mode_flag)
 		{
-			calculator(op, num1, num2);
-		}
-		else if(mode_flag == 1)
-		{
+		case 1:									//程序员模式
 			printf("[程序员模式]\n");
-		}
-		else
-		{
-			error_msg(8);	//未知模式
+		
+		case 0:									//标准模式
+			calculator(op, num1, num2);
+			break;
+		default:
+			error_msg(8);						//未知模式
 			continue;
 		}
 	}
